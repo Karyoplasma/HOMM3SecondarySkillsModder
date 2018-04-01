@@ -202,7 +202,7 @@ public class Heroes3HeroEditor implements ActionListener{
 		int ret = fileChooser.showOpenDialog(null);
 		if (ret == (JFileChooser.APPROVE_OPTION)) {
 			file = fileChooser.getSelectedFile();
-			if (!file.getName().toLowerCase().endsWith("h3hota.exe")) {
+			if (!(file.getName().toLowerCase().endsWith("h3hota.exe") || file.getName().toLowerCase().endsWith("heroes3.exe"))) {
 				getH3Executable();
 				return;
 			}

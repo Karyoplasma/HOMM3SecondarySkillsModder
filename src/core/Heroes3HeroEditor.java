@@ -9,13 +9,18 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -40,8 +45,11 @@ public class Heroes3HeroEditor implements ActionListener{
 	private JTextArea textArea_changes;
 	private JButton btnUnlock;
 	private List<Hero> changedHeroes;
+	private HashMap<Integer,String> changes;
 	@SuppressWarnings("rawtypes")
 	private JComboBox comboBox_skill1lvl, comboBox_hero, comboBox_skill1, comboBox_skill2lvl, comboBox_skill2;
+	private JButton btnSave;
+	private JButton btnLoad;
 
 	/**
 	 * Launch the application.
@@ -192,13 +200,26 @@ public class Heroes3HeroEditor implements ActionListener{
 		btnUnlock.addActionListener(this);
 		frmHotaSecondarySkill.getContentPane().add(btnUnlock);
 		
+		btnSave = new JButton("Save");
+		btnSave.setBounds(521, 18, 89, 23);
+		btnSave.addActionListener(this);
+		frmHotaSecondarySkill.getContentPane().add(btnSave);
+		
+		btnLoad = new JButton("Load");
+		btnLoad.setBounds(656, 18, 89, 23);
+		btnLoad.addActionListener(this);
+		frmHotaSecondarySkill.getContentPane().add(btnLoad);
+		
 		this.changedHeroes = new ArrayList<Hero>();
+		this.changes = new HashMap<Integer,String>();
 		
 	}
 
 	private void getH3Executable() {
 		File file = null;
+		File workingDirectory = new File(System.getProperty("user.dir"));
 		JFileChooser fileChooser = new JFileChooser("Select Heroes 3 or HotA executable");
+		fileChooser.setCurrentDirectory(workingDirectory);
 		int ret = fileChooser.showOpenDialog(null);
 		if (ret == (JFileChooser.APPROVE_OPTION)) {
 			file = fileChooser.getSelectedFile();
@@ -270,12 +291,20 @@ public class Heroes3HeroEditor implements ActionListener{
 		
 		if (e.getSource() == btnWriteFile) {
 			System.out.println(this.changedHeroes.size());
-			for (Hero hero : this.changedHeroes) {
+			for (Map.Entry<Integer, String> entry : changes.entrySet()) {
+				Hero hero = heroes.get(entry.getKey());
 				hero.writeHero();
 			}
-			JOptionPane.showMessageDialog(null, "Changes have been written to file.", "Information", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, String.format("%d changes have been written to file.", changes.size()), "Information", JOptionPane.INFORMATION_MESSAGE);
 			btnUnlock.setText("Unlock");
 			btnWriteFile.setEnabled(false);
+		}
+		if (e.getSource() == btnSave) {
+			saveHeroConfiguration();
+		}
+		if (e.getSource() == btnLoad) {
+			loadHeroConfiguration();
+			applyHeroConfiguration();
 		}
 		
 	}
@@ -294,7 +323,69 @@ public class Heroes3HeroEditor implements ActionListener{
 			heroes.get(selectedIndex).secondary2.setLevel(0x00000000);
 		}
 		changedHeroes.add(heroes.get(selectedIndex));
-		textArea_changes.append(String.format("Made changes to %s", heroes.get(selectedIndex).name));
+		String changed = changes.put(selectedIndex, String.format("%d;%d;%d;%d", heroes.get(selectedIndex).secondary1.trait.id, heroes.get(selectedIndex).secondary1.lvl, heroes.get(selectedIndex).secondary2.trait.id, heroes.get(selectedIndex).secondary2.lvl));
+		String update = (changed == null) ? String.format("Made changes to %s", heroes.get(selectedIndex).name) : String.format("Updated changes to %s", heroes.get(selectedIndex).name);
+		textArea_changes.append(update);
+		textArea_changes.append(System.getProperty("line.separator"));
+	}
+	
+	private void saveHeroConfiguration() {
+		StringBuffer buffer = new StringBuffer();
+		for(Map.Entry<Integer, String> entry : changes.entrySet()) {
+			buffer.append(entry.getKey()).append(";").append(entry.getValue()).append(System.getProperty("line.separator"));
+		}
+		File outputFile = new File("res/changes.txt");
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+			writer.write(buffer.toString());
+			writer.flush();
+			writer.close();
+			JOptionPane.showMessageDialog(null, String.format("%d changes saved.", changes.size()), "Information", JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void loadHeroConfiguration() {
+		this.changes = new HashMap<Integer, String>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("res/changes.txt"));
+			String in;
+			while ((in = reader.readLine()) != null) {
+				if (!in.contains(";")) {
+					continue;
+				}
+				String[] data = in.split(";");
+				String value =  data[1] + ";" +  data[2] + ";" +  data[3] + ";" +  data[4];
+				changes.put(Integer.parseInt(data[0]), value);
+			}
+			reader.close();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void applyHeroConfiguration() {
+		if (changes.size() < 1) {
+			return;
+		} else {
+			for (Map.Entry<Integer, String> entry : changes.entrySet()) {
+				String[] data = entry.getValue().split(";");
+				modifyHero(entry.getKey(), Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+			}
+		}
+		comboBox_hero.setSelectedIndex(0);
+		JOptionPane.showMessageDialog(null, String.format("%d changes loaded.", changes.size()), "Information", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	private void modifyHero(Integer index, int skill1, int skill1lvl, int skill2, int skill2lvl) {
+		heroes.get(index).setSecondary1(skill1, skill1lvl);
+		heroes.get(index).setSecondary2(skill2, skill2lvl);
+		textArea_changes.append(String.format("Loaded changes to %s", heroes.get(index).name));
 		textArea_changes.append(System.getProperty("line.separator"));
 	}
 

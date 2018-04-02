@@ -50,6 +50,17 @@ public class Hero {
 		}
 		return null;
 	}
+	
+	public void setSecondary1(int trait ,int lvl) {
+		this.secondary1.setTrait(this.getTraitById(trait));
+		this.secondary1.setLevel(lvl);
+	}
+	
+	public void setSecondary2(int trait ,int lvl) {
+		this.secondary2.setTrait(this.getTraitById(trait));
+		this.secondary2.setLevel(lvl);
+	}
+	
 	public void readAll() throws IOException {
 		file.seek(offset);
 		int raw_gender = file.readInt();

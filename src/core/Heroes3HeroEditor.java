@@ -44,7 +44,6 @@ public class Heroes3HeroEditor implements ActionListener{
 	private JScrollPane scrollPane;
 	private JTextArea textArea_changes;
 	private JButton btnUnlock;
-	private List<Hero> changedHeroes;
 	private HashMap<Integer,String> changes;
 	@SuppressWarnings("rawtypes")
 	private JComboBox comboBox_skill1lvl, comboBox_hero, comboBox_skill1, comboBox_skill2lvl, comboBox_skill2;
@@ -210,7 +209,6 @@ public class Heroes3HeroEditor implements ActionListener{
 		btnLoad.addActionListener(this);
 		frmHotaSecondarySkill.getContentPane().add(btnLoad);
 		
-		this.changedHeroes = new ArrayList<Hero>();
 		this.changes = new HashMap<Integer,String>();
 		
 	}
@@ -223,7 +221,7 @@ public class Heroes3HeroEditor implements ActionListener{
 		int ret = fileChooser.showOpenDialog(null);
 		if (ret == (JFileChooser.APPROVE_OPTION)) {
 			file = fileChooser.getSelectedFile();
-			if (!(file.getName().toLowerCase().endsWith("h3hota.exe") || file.getName().toLowerCase().endsWith("heroes3.exe"))) {
+			if (!(file.getName().toLowerCase().matches("h3hota(\\shd)?.exe") || file.getName().toLowerCase().matches("heroes3(\\shd)?.exe"))) {
 				getH3Executable();
 				return;
 			}
@@ -290,7 +288,6 @@ public class Heroes3HeroEditor implements ActionListener{
 		}
 		
 		if (e.getSource() == btnWriteFile) {
-			System.out.println(this.changedHeroes.size());
 			for (Map.Entry<Integer, String> entry : changes.entrySet()) {
 				Hero hero = heroes.get(entry.getKey());
 				hero.writeHero();
@@ -322,7 +319,6 @@ public class Heroes3HeroEditor implements ActionListener{
 		} else {
 			heroes.get(selectedIndex).secondary2.setLevel(0x00000000);
 		}
-		changedHeroes.add(heroes.get(selectedIndex));
 		String changed = changes.put(selectedIndex, String.format("%d;%d;%d;%d", heroes.get(selectedIndex).secondary1.trait.id, heroes.get(selectedIndex).secondary1.lvl, heroes.get(selectedIndex).secondary2.trait.id, heroes.get(selectedIndex).secondary2.lvl));
 		String update = (changed == null) ? String.format("Made changes to %s", heroes.get(selectedIndex).name) : String.format("Updated changes to %s", heroes.get(selectedIndex).name);
 		textArea_changes.append(update);

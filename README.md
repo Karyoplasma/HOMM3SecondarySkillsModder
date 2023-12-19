@@ -37,9 +37,9 @@ Feature list of the 2023 Update:
 
 And probably more that I missed to put in this list. It's a complete rewrite of an old idea.
 
-Enjoy:
+Enjoy!
 
-[Link to latest release](toAdd)
+[Link to latest release](https://github.com/Karyoplasma/HOMM3SecondarySkillsModder/releases/tag/2.0.2.3)
 
 ## Original readme.md
 

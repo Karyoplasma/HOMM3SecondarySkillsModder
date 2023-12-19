@@ -33,15 +33,15 @@ public enum HeroTrait {
 	NONE("None", 0xFFFFFFFF);
 	
 	private String name;
-	private int id;
+	private int bytes;
 	
-	private HeroTrait(String name, int id) {
+	private HeroTrait(String name, int bytes) {
 		this.name = name;
-		this.id = id;
+		this.bytes = bytes;
 	}
 
-	public int getID() {
-		return this.id;
+	public int getBytes() {
+		return this.bytes;
 	}
 	
 	@Override

@@ -5,14 +5,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
 import enums.Gender;
-import enums.HeroData;
+import enums.HeroHeader;
 import enums.HeroTrait;
 import enums.Profession;
 import enums.Race;
+import enums.SkillLevel;
 
 public class H3ExecutableReader {
 
@@ -21,13 +21,11 @@ public class H3ExecutableReader {
 	}
 
 	public static Map<String, Hero> readHeroes(Path executable) throws IOException {
-		Map<String, Hero> heroes = new HashMap<String, Hero>();
+		Map<String, Hero> heroes = new LinkedHashMap<String, Hero>();
 		FileChannel fileChannel = FileChannel.open(executable, StandardOpenOption.READ);
 
-		for (HeroData heroData : HeroData.values()) {
-			String name = heroData.getName();
-			String speciality = heroData.getSpecialty();
-			long offset = heroData.getOffset();
+		for (HeroHeader header : HeroHeader.values()) {
+			long offset = header.getOffset();
 			int rawData = -1;
 			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES * 9);
 
@@ -44,18 +42,18 @@ public class H3ExecutableReader {
 			HeroTrait skill1 = rawData == 0xFFFFFFFF ? HeroTrait.NONE
 					: HeroTrait.values()[Integer.reverseBytes(rawData)];
 			rawData = buffer.getInt();
-			SecondarySkill secondary1 = new SecondarySkill(skill1, rawData);
+			SecondarySkill secondary1 = new SecondarySkill(skill1, SkillLevel.values()[Integer.reverseBytes(rawData)]);
 			rawData = buffer.getInt();
 			HeroTrait skill2 = rawData == 0xFFFFFFFF ? HeroTrait.NONE
 					: HeroTrait.values()[Integer.reverseBytes(rawData)];
 			rawData = buffer.getInt();
-			SecondarySkill secondary2 = new SecondarySkill(skill2, rawData);
+			SecondarySkill secondary2 = new SecondarySkill(skill2, SkillLevel.values()[Integer.reverseBytes(rawData)]);
 			rawData = buffer.getInt();
 			boolean hasSpellBook = rawData == 0x01000000;
 			rawData = buffer.getInt();
-			Hero hero = new Hero(name, speciality, secondary1, secondary2, gender, race, profession,
+			Hero hero = new Hero(header, secondary1, secondary2, null, gender, race, profession,
 					hasSpellBook, rawData);
-			heroes.put(name, hero);
+			heroes.put(header.getName(), hero);
 
 		}
 		fileChannel.close();

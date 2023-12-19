@@ -1,25 +1,29 @@
 package models;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.table.AbstractTableModel;
 
+import core.Hero;
 import core.SkillChange;
 import gui.Heroes3HeroEditor;
 
-public class ChangesTableModel extends AbstractTableModel implements Observer {
-	private final String[] columnNames = { "Hero", "Skill 1", "Skill 2", "Change 1", "Change 2" };
-	final Heroes3HeroEditor gui;
+public class ChangesTableModel extends AbstractTableModel {
+
+	private static final long serialVersionUID = -1753585994126747934L;
+	private final String[] columnNames = { "Hero", "Original", "Changed"};
+	private final List<Hero> changes;
 	
-	public ChangesTableModel(Heroes3HeroEditor gui) {
-		this.gui = gui;
+	public ChangesTableModel(List<Hero> changes) {
+		this.changes = changes;
 	}
 
 	@Override
 	public int getRowCount() {
-		return gui.getChanges().size();
+		return changes.size();
 	}
 
 	@Override
@@ -34,13 +38,21 @@ public class ChangesTableModel extends AbstractTableModel implements Observer {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		//TODO implement this 
-		return null;
+		Hero hero = changes.get(rowIndex);
+		SkillChange change = hero.getChange();		
+		if (change == null) {
+			return "Nothing changed";
+		}
+		
+		switch (columnIndex) {
+		case 0:
+			return hero.getName();
+		case 1:
+			return String.format("%s, %s", hero.getSecondary1(), hero.getSecondary2());
+		case 2:
+			return String.format("%s, %s", change.getChanged1(), change.getChanged2());
+		default:
+			return "-";
+		}
 	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		System.out.println("ChangesTableModel got notified");
-	}
-
 }

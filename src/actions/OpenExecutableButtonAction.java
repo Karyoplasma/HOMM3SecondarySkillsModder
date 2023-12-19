@@ -8,10 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
+import java.util.Set;
+import java.util.LinkedHashSet;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -75,6 +78,7 @@ public class OpenExecutableButtonAction extends AbstractAction {
 		if (saveDirectoyPreference && gui.savePath()) {
 			this.saveDirectoryPreference(executable.toPath());
 		}
+		
 		return executable.toPath();
 
 	}
@@ -93,7 +97,7 @@ public class OpenExecutableButtonAction extends AbstractAction {
 	}
 
 	private void readExecutable(Path executable) {
-		Map<String, Hero> heroes = new HashMap<String, Hero>();
+		Map<String, Hero> heroes = new LinkedHashMap<String, Hero>();
 		try {
 			heroes = H3ExecutableReader.readHeroes(executable);
 		} catch (IOException e) {
@@ -108,8 +112,7 @@ public class OpenExecutableButtonAction extends AbstractAction {
 			return;
 		}
 		if (!heroes.isEmpty()) {
-			this.gui.setHeroes(heroes);
-			System.out.println(heroes.size());
+			gui.setHeroes(heroes);
 		}
 	}
 }

@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
+
+import core.Hero;
 import core.SkillChange;
 import gui.Heroes3HeroEditor;
 
@@ -25,11 +28,11 @@ public class SaveButtonAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Map<String, SkillChange> changes = gui.getChanges();
+		List<Hero> changes = gui.getChanges();
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get("resources/changes.txt"),
 				StandardCharsets.UTF_8)) {
-			for (SkillChange value : changes.values()) {
-				writer.write(value.toString());
+			for (Hero value : changes) {
+				writer.write(String.format("%s;%s", value.getName(), value.getChange()));
 				writer.newLine();
 			}
 			JOptionPane.showMessageDialog(gui.getFrame(), String.format("%d changes saved.", changes.size()),

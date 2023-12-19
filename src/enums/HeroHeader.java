@@ -1,6 +1,6 @@
 package enums;
 
-public enum HeroData {
+public enum HeroHeader {
 	ORRIN("Orrin", "Archery", 0x279dd0),
 	VALESKA("Valeska", "Archers", 0x279e2c),
 	EDRIC("Edric", "Griffins", 0x279e88),
@@ -161,7 +161,7 @@ public enum HeroData {
 	private String name, specialty;
 	private long offset;
 	
-	private HeroData(String name, String specialty, long offset) {
+	private HeroHeader(String name, String specialty, long offset) {
 		this.name = name;
 		this.specialty = specialty;
 		this.offset = offset;

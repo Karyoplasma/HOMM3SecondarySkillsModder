@@ -5,16 +5,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-
 import core.Hero;
 import core.SecondarySkill;
 import core.SkillChange;
 import enums.HeroTrait;
+import enums.SkillLevel;
 import gui.Heroes3HeroEditor;
 
 public class LoadButtonAction extends AbstractAction {
@@ -29,29 +29,32 @@ public class LoadButtonAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		HashMap<String, SkillChange> changes = new HashMap<String, SkillChange>();
+		List<Hero> changes = new ArrayList<Hero>();
 		File changesFile = new File("resources/changes.txt");
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(changesFile));
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(changesFile))) {
 			String in;
+
 			while ((in = reader.readLine()) != null) {
 				if (!in.contains(";")) {
 					continue;
 				}
 				String[] data = in.split(";");
 				Hero hero = gui.getHeroes().get(data[0]);
-				SecondarySkill change1 = new SecondarySkill(HeroTrait.values()[Integer.parseInt(data[1])],
-						Integer.parseInt(data[2]));
-				SecondarySkill change2 = new SecondarySkill(HeroTrait.values()[Integer.parseInt(data[3])],
-						Integer.parseInt(data[4]));
-				SkillChange skillChange = new SkillChange(hero, change1, change2);
-				changes.put(hero.getName(), skillChange);
+				SecondarySkill change1 = new SecondarySkill(HeroTrait.valueOf(data[1]),
+						SkillLevel.valueOf(data[2]));
+				SecondarySkill change2 = new SecondarySkill(HeroTrait.valueOf(data[3]),
+						SkillLevel.valueOf(data[4]));
+				SkillChange skillChange = new SkillChange(change1, change2);
+				hero.setChange(skillChange);
+				changes.add(hero);
 			}
 			reader.close();
 
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException ex) {
+			JOptionPane.showMessageDialog(gui.getFrame(), "Failed to load changes. Please try again.",
+					"Information", JOptionPane.INFORMATION_MESSAGE);
+			ex.printStackTrace();
 			return;
 		}
 		gui.setChanges(changes);

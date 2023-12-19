@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Map;
 
 public class H3ExecutableWriter {
@@ -12,7 +13,7 @@ public class H3ExecutableWriter {
 
 	}
 
-	public static boolean writeAllChanges(Map<String, SkillChange> changes, Path executable) throws IOException {
+	public static boolean writeAllChanges(List<Hero> changes, Path executable) throws IOException {
 		if (executable == null) {
 			return false;
 		}
@@ -23,10 +24,11 @@ public class H3ExecutableWriter {
 			return false;
 		}
 		FileChannel fileChannel = FileChannel.open(executable, StandardOpenOption.WRITE);
-		for (SkillChange skillChange : changes.values()) {
-			System.out.println(String.format("I write hero %s: %s (%s), %s (%s)", skillChange.getHero().getName(),
-					skillChange.getChanged1().getTrait(), skillChange.getChanged1().getLvlString(),
-					skillChange.getChanged2().getTrait(), skillChange.getChanged2().getLvlString()));
+		for (Hero hero : changes) {
+			SkillChange skillChange = hero.getChange();
+			System.out.println(String.format("I write hero %s: %s (%s), %s (%s)", hero.getName(),
+					skillChange.getChanged1().getTrait(), skillChange.getChanged1().getLevel(),
+					skillChange.getChanged2().getTrait(), skillChange.getChanged2().getLevel()));
 			writeHero();
 		}
 

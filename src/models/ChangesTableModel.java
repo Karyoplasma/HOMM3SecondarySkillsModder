@@ -1,15 +1,9 @@
 package models;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
-
 import javax.swing.table.AbstractTableModel;
-
 import core.Hero;
 import core.SkillChange;
-import gui.Heroes3HeroEditor;
 
 public class ChangesTableModel extends AbstractTableModel {
 

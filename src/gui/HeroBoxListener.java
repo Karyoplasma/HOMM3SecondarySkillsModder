@@ -9,20 +9,18 @@ import enums.HeroTrait;
 
 public class HeroBoxListener implements ItemListener {
 	private Heroes3HeroEditor gui;
-	
+
 	public HeroBoxListener(Heroes3HeroEditor gui) {
 		this.gui = gui;
 	}
-	
+
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			Hero hero = (Hero) gui.getComboBoxHero().getSelectedItem();
-			StringBuffer buffer = new StringBuffer();
-			
-			buffer.append(hero.getName()).append("\t Specialty: ").append(hero.getSpecialty()).append(System.getProperty("line.separator"));
-			buffer.append(hero.getGender()).append(" ").append(hero.getProfession());
-			gui.setHeroInfo(buffer.toString());
+			String heroInfo = this.getHeroInfo(hero);
+
+			gui.setHeroInfo(heroInfo);
 			SkillChange change = hero.getChange();
 			if (change == null) {
 				gui.getComboBoxSkill1().setSelectedItem(hero.getSecondary1().getTrait());
@@ -39,8 +37,19 @@ public class HeroBoxListener implements ItemListener {
 					gui.getComboBoxSkill2lvl().setSelectedItem(change.getChanged2().getLevel());
 				}
 			}
-			
 
 		}
+	}
+
+	private String getHeroInfo(Hero hero) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(String.format("%s (%s)", hero.getName(), hero.getSpecialty()));
+		buffer.append(System.getProperty("line.separator"));
+		buffer.append(String.format("%s %s (%s)", hero.getRace(), hero.getProfession(), hero.getGender()));
+		buffer.append(System.getProperty("line.separator"));
+		buffer.append(hero.hasSpellbook() ? "Brings a spellbook" : "Doesn't bring a spellbook");
+		buffer.append(System.getProperty("line.separator"));
+		buffer.append(String.format("Starting skills in the executable: %s and %s", hero.getSecondary1(), hero.getSecondary2()));
+		return buffer.toString();
 	}
 }

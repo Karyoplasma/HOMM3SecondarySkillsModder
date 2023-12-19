@@ -17,15 +17,15 @@ public enum Race {
 	VAMPIRE("Vampire", 0x0d000000);
 	
 	private String race;
-	private int id;
+	private int bytes;
 	
-	private Race(String race, int id) {
+	private Race(String race, int bytes) {
 		this.race = race;
-		this.id = id;
+		this.bytes = bytes;
 	}
 	
 	public int getID() {
-		return this.id;
+		return this.bytes;
 	}
 	
 	@Override

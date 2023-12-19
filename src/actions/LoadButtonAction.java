@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import core.Hero;
 import core.SecondarySkill;
 import core.SkillChange;
@@ -30,8 +33,11 @@ public class LoadButtonAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		List<Hero> changes = new ArrayList<Hero>();
-		File changesFile = new File("resources/changes.txt");
 
+		File changesFile = this.getChangesFile();
+		if (changesFile == null) {
+			return;
+		}
 		try (BufferedReader reader = new BufferedReader(new FileReader(changesFile))) {
 			String in;
 
@@ -41,19 +47,25 @@ public class LoadButtonAction extends AbstractAction {
 				}
 				String[] data = in.split(";");
 				Hero hero = gui.getHeroes().get(data[0]);
-				SecondarySkill change1 = new SecondarySkill(HeroTrait.valueOf(data[1]),
-						SkillLevel.valueOf(data[2]));
-				SecondarySkill change2 = new SecondarySkill(HeroTrait.valueOf(data[3]),
-						SkillLevel.valueOf(data[4]));
+				SecondarySkill change1 = new SecondarySkill(HeroTrait.values()[Integer.parseInt(data[1])],
+						SkillLevel.values()[Integer.parseInt(data[2])]);
+				SecondarySkill change2 = new SecondarySkill(HeroTrait.values()[Integer.parseInt(data[3])],
+						SkillLevel.values()[Integer.parseInt(data[4])]);
 				SkillChange skillChange = new SkillChange(change1, change2);
 				hero.setChange(skillChange);
 				changes.add(hero);
+				if (hero.equals(gui.getComboBoxHero().getItemAt(gui.getComboBoxHero().getSelectedIndex()))) {
+					gui.getComboBoxSkill1().setSelectedItem(change1.getTrait());
+					gui.getComboBoxSkill1lvl().setSelectedItem(change1.getLevel());
+					gui.getComboBoxSkill2().setSelectedItem(change2.getTrait());
+					gui.getComboBoxSkill2lvl().setSelectedItem(change2.getLevel());
+				}
 			}
 			reader.close();
 
 		} catch (IOException ex) {
-			JOptionPane.showMessageDialog(gui.getFrame(), "Failed to load changes. Please try again.",
-					"Information", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(gui.getFrame(), "Failed to load changes. Please try again.", "Information",
+					JOptionPane.INFORMATION_MESSAGE);
 			ex.printStackTrace();
 			return;
 		}
@@ -61,5 +73,17 @@ public class LoadButtonAction extends AbstractAction {
 		JOptionPane.showMessageDialog(gui.getFrame(), String.format("%d changes loaded.", changes.size()),
 				"Information", JOptionPane.INFORMATION_MESSAGE);
 
+	}
+
+	private File getChangesFile() {
+		File directory = new File("resources");
+		JFileChooser fileChooser = new JFileChooser("Select changes you saved");
+		fileChooser.setFileFilter(new FileNameExtensionFilter("mod files", "mod"));
+		fileChooser.setCurrentDirectory(directory);
+		int ret = fileChooser.showOpenDialog(null);
+		if (ret == (JFileChooser.APPROVE_OPTION)) {
+			return fileChooser.getSelectedFile();
+		}
+		return null;
 	}
 }

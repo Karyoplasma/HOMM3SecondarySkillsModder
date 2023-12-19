@@ -1,7 +1,6 @@
 package enums;
 
 public enum Profession {
-
 	KNIGHT("Knight", 0x00000000),
 	CLERIC("Cleric", 0x01000000),
 	RANGER("Ranger", 0x02000000),

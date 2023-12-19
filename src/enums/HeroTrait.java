@@ -1,7 +1,6 @@
 package enums;
 
-public enum HeroTrait {
-	
+public enum HeroTrait {	
 	PATHFINDING("Pathfinding", 0x00000000),
 	ARCHERY("Archery", 0x01000000),
 	LOGISTICS("Logistics", 0x02000000),

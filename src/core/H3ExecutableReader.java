@@ -51,8 +51,7 @@ public class H3ExecutableReader {
 			rawData = buffer.getInt();
 			boolean hasSpellBook = rawData == 0x01000000;
 			rawData = buffer.getInt();
-			Hero hero = new Hero(header, secondary1, secondary2, null, gender, race, profession,
-					hasSpellBook, rawData);
+			Hero hero = new Hero(header, secondary1, secondary2, null, gender, race, profession, hasSpellBook, rawData);
 			heroes.put(header.getName(), hero);
 
 		}

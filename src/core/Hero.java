@@ -6,7 +6,7 @@ import enums.Profession;
 import enums.Race;
 
 public class Hero {
-	
+
 	private HeroHeader header;
 	private Gender gender;
 	private Race race;
@@ -15,7 +15,7 @@ public class Hero {
 	private SkillChange change;
 	private boolean hasSpellbook;
 	private int spell;
-	
+
 	public Hero(HeroHeader header, SecondarySkill secondary1, SecondarySkill secondary2, SkillChange change,
 			Gender gender, Race race, Profession profession, boolean hasSpellBook, int spell) {
 		this.header = header;
@@ -40,49 +40,52 @@ public class Hero {
 	public String getName() {
 		return header.getName();
 	}
-	
+
 	public String getSpecialty() {
 		return header.getSpecialty();
 	}
-	
+
 	public long getOffset() {
 		return header.getOffset();
 	}
-	
+
 	public Profession getProfession() {
 		return profession;
 	}
+
 	public Gender getGender() {
 		return gender;
 	}
-	
+
 	public HeroHeader getHeader() {
 		return header;
 	}
-	
+
 	public SkillChange getChange() {
 		return change;
 	}
-
+	
+	public int getSpell() {
+		return spell;
+	}
+	
+	public boolean hasSpellbook() {
+		return this.hasSpellbook;
+	}
+	
 	public void setChange(SkillChange change) {
 		this.change = change;
 	}
-
-	public void printOut() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(this.getName()).append(" (").append(this.getSpecialty()).append(") ");
-		buffer.append(this.gender).append(" ").append(this.race).append(" ");
-		buffer.append(this.profession).append(" ").append(getSecondary1().toString()).append(" ");
-		buffer.append(getSecondary2().toString()).append(" ").append(this.hasSpellbook).append(" ");
-		buffer.append(String.format("0x%08X", this.spell));
-		System.out.println(buffer.toString());
+	
+	public Object getRace() {
+		return race;
 	}
 	
 	@Override
 	public String toString() {
 		return this.getName();
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Hero)) {
@@ -90,5 +93,5 @@ public class Hero {
 		}
 		Hero other = (Hero) o;
 		return this.header == other.getHeader();
-	}
+	}	
 }

@@ -80,6 +80,9 @@ public class OpenExecutableButtonAction extends AbstractAction {
 		Path directory = path.getParent();
 		String content = directory.toString();
 		Path preferenceFilePath = Paths.get("resources/directoryPath.txt");
+		if (!preferenceFilePath.getParent().toFile().exists()) {
+			preferenceFilePath.getParent().toFile().mkdir();
+		}
 		try {
 			Files.write(preferenceFilePath, content.getBytes(), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);

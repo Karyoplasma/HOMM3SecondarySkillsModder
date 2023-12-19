@@ -30,6 +30,9 @@ public class SaveButtonAction extends AbstractAction {
 		String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String fileName = "resources/" + timestamp + ".mod";
 		File file = new File(fileName);
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdir();
+		}
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
 			// Write each change to the file

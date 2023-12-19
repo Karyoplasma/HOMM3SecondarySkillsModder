@@ -1,8 +1,10 @@
 package core;
 
+import enums.HeroTrait;
+
 public class SecondarySkill {
-	HeroTrait trait;
-	int lvl;
+	private HeroTrait trait;
+	private int lvl;
 	
 	public SecondarySkill(HeroTrait trait, int lvl) {
 		this.trait = trait;
@@ -20,35 +22,43 @@ public class SecondarySkill {
 	
 	@Override
 	public String toString() {
-		if (this.trait.equals(HeroTrait.None)) {
+		if (this.getTrait().equals(HeroTrait.NONE)) {
 			return "None";
 		}
-		return String.format("%s %s", this.getLvlString(), this.trait.getName());
+		return String.format("%s %s", this.getLvlString(), this.getTrait().toString());
 	}
 
-	public void setTrait(HeroTrait trait) {
-		this.trait = trait;
-		
-	}
+//	public void setTrait(HeroTrait trait) {
+//		this.trait = trait;
+//		
+//	}
+//
+//	public void setLevel(int i) {
+//		this.lvl = i;
+//		
+//	}
+//
+//	public void setLevel(String s) {
+//		if (s.equals("Basic")) {
+//			this.lvl = 0x01000000;
+//			return;
+//		}
+//		if (s.equals("Advanced")) {
+//			this.lvl = 0x02000000;
+//			return;
+//		}
+//		if (s.equals("Expert")) {
+//			this.lvl = 0x03000000;
+//			return;
+//		}
+//		this.lvl = 0x00000000;
+//	}
 
-	public void setLevel(int i) {
-		this.lvl = i;
-		
+	public HeroTrait getTrait() {
+		return this.trait;
 	}
-
-	public void setLevel(String s) {
-		if (s.equals("Basic")) {
-			this.lvl = 0x01000000;
-			return;
-		}
-		if (s.equals("Advanced")) {
-			this.lvl = 0x02000000;
-			return;
-		}
-		if (s.equals("Expert")) {
-			this.lvl = 0x03000000;
-			return;
-		}
-		this.lvl = 0x00000000;
+	
+	public int getLvl() {
+		return this.lvl;
 	}
 }

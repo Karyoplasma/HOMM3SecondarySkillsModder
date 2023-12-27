@@ -1,9 +1,11 @@
 package core;
 
+import enums.Creature;
 import enums.Gender;
 import enums.HeroHeader;
 import enums.Profession;
 import enums.Race;
+import enums.Spell;
 
 public class Hero {
 
@@ -14,10 +16,11 @@ public class Hero {
 	private SecondarySkill secondary1, secondary2;
 	private SkillChange change;
 	private boolean hasSpellbook;
-	private int spell;
+	private Spell spell;
+	private Creature[] startingTroops;
 
 	public Hero(HeroHeader header, SecondarySkill secondary1, SecondarySkill secondary2, SkillChange change,
-			Gender gender, Race race, Profession profession, boolean hasSpellBook, int spell) {
+			Gender gender, Race race, Profession profession, boolean hasSpellBook, Spell spell, Creature[] startingTroops) {
 		this.header = header;
 		this.secondary1 = secondary1;
 		this.secondary2 = secondary2;
@@ -27,6 +30,7 @@ public class Hero {
 		this.profession = profession;
 		this.hasSpellbook = hasSpellBook;
 		this.spell = spell;
+		this.startingTroops = startingTroops;
 	}
 
 	public SecondarySkill getSecondary1() {
@@ -65,8 +69,12 @@ public class Hero {
 		return change;
 	}
 	
-	public int getSpell() {
+	public Spell getSpell() {
 		return spell;
+	}
+	
+	public Creature[] getStartingTroops() {
+		return startingTroops;
 	}
 	
 	public boolean hasSpellbook() {

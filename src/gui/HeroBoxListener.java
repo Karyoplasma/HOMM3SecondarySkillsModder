@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 import core.Hero;
 import core.SkillChange;
@@ -48,8 +49,11 @@ public class HeroBoxListener implements ItemListener {
 		buffer.append(String.format("%s %s (%s)", hero.getRace(), hero.getProfession(), hero.getGender()));
 		buffer.append(System.getProperty("line.separator"));
 		buffer.append(hero.hasSpellbook() ? "Brings a spellbook" : "Doesn't bring a spellbook");
+		buffer.append(String.format("; Spell: %s", hero.getSpell()));
 		buffer.append(System.getProperty("line.separator"));
 		buffer.append(String.format("Starting skills in the executable: %s and %s", hero.getSecondary1(), hero.getSecondary2()));
+		buffer.append(System.getProperty("line.separator"));
+		buffer.append(String.format("Starting troops: %s", Arrays.toString(hero.getStartingTroops())));
 		return buffer.toString();
 	}
 }

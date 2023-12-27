@@ -7,12 +7,15 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import enums.Creature;
 import enums.Gender;
 import enums.HeroHeader;
 import enums.HeroTrait;
 import enums.Profession;
 import enums.Race;
 import enums.SkillLevel;
+import enums.Spell;
 
 public class H3ExecutableReader {
 
@@ -27,7 +30,7 @@ public class H3ExecutableReader {
 		for (HeroHeader header : HeroHeader.values()) {
 			long offset = header.getOffset();
 			int rawData = -1;
-			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES * 9);
+			ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES * 12);
 
 			// Process the data
 			fileChannel.read(buffer, offset);
@@ -51,7 +54,19 @@ public class H3ExecutableReader {
 			rawData = buffer.getInt();
 			boolean hasSpellBook = rawData == 0x01000000;
 			rawData = buffer.getInt();
-			Hero hero = new Hero(header, secondary1, secondary2, null, gender, race, profession, hasSpellBook, rawData);
+			Spell spell;
+			if (rawData == 0xFFFFFFFF) {
+				spell = Spell.NONE;
+			} else {
+				spell = Spell.values()[Integer.reverseBytes(rawData)];
+			}
+			Creature[] startingTroops = new Creature[3];
+			for (int i = 0; i < 3; i++) {
+				rawData = buffer.getInt();
+				startingTroops[i] = Creature.getCreatureByBytes(rawData);
+			}
+			Hero hero = new Hero(header, secondary1, secondary2, null, gender, race, profession, hasSpellBook, spell,
+					startingTroops);
 			heroes.put(header.getName(), hero);
 
 		}

@@ -68,6 +68,11 @@ public class OpenExecutableButtonAction extends AbstractAction {
 		} else {
 			return null;
 		}
+		
+		if (!executable.getParentFile().getAbsolutePath().equals(gui.getExecutableDirectory())) {
+			saveDirectoyPreference = true;
+		}
+		
 		if (saveDirectoyPreference && gui.savePath()) {
 			this.saveDirectoryPreference(executable.toPath());
 		}
